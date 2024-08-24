@@ -59,3 +59,10 @@ image-level diffusion loss
 * ![image](https://github.com/user-attachments/assets/f6e7969e-02a6-416d-90e4-ae6dca3b3c93)
 * 250 diffusion steps (but trained on 1000 timesteps)
 * cfg_coeff = 5.0
+
+---
+![image](https://github.com/user-attachments/assets/53992abe-c322-4031-a49f-d48924c9e52d)
+
+---
+![image](https://github.com/user-attachments/assets/70afb4df-cf92-47b3-b3a2-c74a6f6310a6)
+---
