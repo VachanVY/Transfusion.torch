@@ -51,5 +51,11 @@ x0 according to the diffusion process to produce xt before patchification, and t
 image-level diffusion loss
 * ![image](https://github.com/user-attachments/assets/75015697-691d-452a-8b20-23b3d4fbe7e6)
 
+## Optimization
+* AdamW => | betas=(0.9, 0.95) | eps=1e-8 | lr=3e-4 | warmup=4000 | min_lr=1.5e-5 | weight_decay=0.1 | clip_norm=1.0 |
+* balancing_coeff (lambda in loss function) = 5
+
 ## Inference
 * ![image](https://github.com/user-attachments/assets/f6e7969e-02a6-416d-90e4-ae6dca3b3c93)
+* 250 diffusion steps (but trained on 1000 timesteps)
+* cfg_coeff = 5.0
