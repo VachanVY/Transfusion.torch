@@ -50,6 +50,8 @@ elements (image patches) in the sequence
 x0 according to the diffusion process to produce xt before patchification, and then compute the
 image-level diffusion loss
 * ![image](https://github.com/user-attachments/assets/75015697-691d-452a-8b20-23b3d4fbe7e6)
+* ![image](https://github.com/user-attachments/assets/289d4252-1ebc-4298-8086-a0fcc5b675a3)
+
 
 ## Optimization
 * AdamW => | betas=(0.9, 0.95) | eps=1e-8 | lr=3e-4 | warmup=4000 | min_lr=1.5e-5 | weight_decay=0.1 | clip_norm=1.0 |
