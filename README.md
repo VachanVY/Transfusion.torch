@@ -1,12 +1,17 @@
-# Transfusion
+# Transfusion [[Paper]](https://arxiv.org/pdf/2408.11039v1)
 * Transfusion is a Multi-Modal Transformer, it can generate text like GPTs and images like Diffusion Models, all at once in one go not separately!
 * It can easily switch between text and image modalities for generations, and it is nothing complicated, just a single transformer with some modality-specific components!
 * This can easily be extended to other modalities like videos, audio, etc, but for now, it can only take images and text as input
-* For now I have "test trained" it on
+* For now I have **"test-trained"** it on
   * Fashion MNIST Dataset (contains images of Fashion Items like T-shirt/top, Trouser, Pullover, Dress, Coat, Sandal, Shirt, Sneaker, Bag, Ankle boot
   * MNIST Dataset (contains images of Digits from 0 to 9)
-  I have taken the classes as text and trained it. See below for some generated examples...
+  * I have taken the classes as text and trained it. See below for some generated examples...
 * **`TODO`: Train on a large Multi-Modal Dataset (something like tiny stories dataset with images in between illustrating the story...?)**
+
+## Contents
+* [Test Trained on Fashion MNIST Dataset](https://github.com/VachanVY/Transfusion.torch/tree/main?tab=readme-ov-file#test-trained-on-fashion-mnist-dataset) <===> [Training Notebook with some generated samples](https://github.com/VachanVY/Transfusion.torch/blob/main/fashion_mnist_test_transfusion.ipynb)
+* [Test Trained on MNIST dataset](https://github.com/VachanVY/Transfusion.torch/tree/main?tab=readme-ov-file#test-trained-on-mnist-dataset) <===> [Training Notebook with some generated samples](https://github.com/VachanVY/Transfusion.torch/blob/main/mnist_test_transfusion.ipynb)
+* [Important Snippets from the Paper](https://github.com/VachanVY/Transfusion.torch/tree/main?tab=readme-ov-file#introduction)
   
 ## Test Trained on Fashion MNIST Dataset
 * Can produce 2 images of Fashion Items along with the text (in the form of tokens) shown above the respective images
