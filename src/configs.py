@@ -43,13 +43,12 @@ class MNIST_config:
     min_lr:float = 0.0*max_lr
     no_decay:bool = True
     beta1:float = 0.9
-    beta2:float = 0.99 # 0.95 in paper # for smaller datasets a bit higher is better # was 0.975 changed to 0.99
+    beta2:float = 0.99 # 0.95 in paper # for smaller datasets a bit higher is better
     clipnorm:float = 1e0
     weight_decay:float = 0.0 # 1e0 in paper
     
     patience:int = 10
     num_grad_accumalation_steps:int = 1
-    checkpoint_dir:str = "checkpoints"
     return_best_train_states:bool = True
     log_interval:int = 25
     eval_freq:int = 400
@@ -63,6 +62,21 @@ class MNIST_config:
     EOS:Optional[torch.Tensor] = torch.tensor(num_classes+3, dtype=torch.long) # 13 
 
     lm_output_units:int = num_classes + int(BOI is not None) + int(IGNORE_TOKEN is not None) + int(EOI is not None) + int(EOS is not None)
+
+
+@dataclass
+class FashionMNIST_config(MNIST_config):
+    d_model:int = 512
+    num_heads:int = 8
+    assert d_model % 2 == 0
+    assert d_model % num_heads == 0
+    num_layers:int = 8
+
+    num_steps:int = 50_000
+    ckpt_dir:str = "checkpoints/fashionmnist"
+
+    eval_freq:int = 600
+    log_interval:int = 1
 
 
 """@dataclass
