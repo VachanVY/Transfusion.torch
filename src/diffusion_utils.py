@@ -69,7 +69,7 @@ class DiffusionUtils:
         patch_ops = model.patch_ops
         sample_func = self.one_step_ddim if use_ddim else self.one_step_ddpm
 
-        noised_image = torch.normal(mean=0.0, std=1.0, size=(1, self.in_channels, self.H, self.W), device=self.device) # (B, C, H, W)
+        noised_image = torch.normal(mean=0.0, std=1.0, size=(self.in_channels, self.H, self.W), device=self.device) # (B, C, H, W)
         modality_strings.append("image"); modality_tokens += [()] # add empty slot for image modality
         for i in trange(0, self.num_timesteps-1):
             timesteps = torch.tensor([self.num_timesteps - i - 1], device=self.device) # (B,)
@@ -82,9 +82,9 @@ class DiffusionUtils:
                 )
             pred_noise = patch_ops.unpatchify(
                 modality_token_emb[-1] # noise to be removed from the noisy image
-            ) # (B, N = H*W//P**2, D = (P**2)*C) => (B, C, H, W)
+            ) # (N = H*W//P**2, D = (P**2)*C) => (C, H, W)
             
-            noised_image = sample_func(noised_image, pred_noise, timesteps) # (B, C, H, W)
+            noised_image = sample_func(noised_image[None], pred_noise[None], timesteps)[0] # (C, H, W)
         
-        modality_tokens[-1] = (patch_ops.patchify(noised_image), torch.tensor([0], device=self.device)) # generated image: (B, N, D), timesteps: 0
+        modality_tokens[-1] = (patch_ops.patchify(noised_image), torch.tensor(0, device=self.device).view((1,))) # generated image: (N, D), timesteps: 0
         return modality_tokens, modality_strings

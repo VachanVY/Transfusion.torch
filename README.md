@@ -2,21 +2,21 @@
 * Transfusion is a Multi-Modal Transformer, it can generate text like GPTs and images like Diffusion Models, all at once in one go not separately!
 * It can easily switch between text and image modalities for generations, and it is nothing complicated, just a single transformer with some modality-specific components!
 * This can easily be extended to other modalities like videos, audio, etc, but for now, it can only take images and text as input
-* For now I have **"test-trained"** it on
+<!-- * For now I have **"test-trained"** it on
   * Fashion MNIST Dataset (contains images of Fashion Items like T-shirt/top, Trouser, Pullover, Dress, Coat, Sandal, Shirt, Sneaker, Bag, Ankle boot
   * MNIST Dataset (contains images of Digits from 0 to 9)
-  * I have taken the classes as text and trained it. See below for some generated examples...
+  * I have taken the classes as text and trained it. See below for some generated examples... -->
 * **`TODO`: Train on a large Multi-Modal Dataset (something like tiny stories dataset with images in between illustrating the story...?)**
 
 ## Contents
-* [Test Trained on Fashion MNIST Dataset](https://github.com/VachanVY/Transfusion.torch/tree/main?tab=readme-ov-file#test-trained-on-fashion-mnist-dataset) <===> [Training Notebook with some generated samples](https://github.com/VachanVY/Transfusion.torch/blob/main/fashion_mnist_test_transfusion.ipynb)
-* [Test Trained on MNIST dataset](https://github.com/VachanVY/Transfusion.torch/tree/main?tab=readme-ov-file#test-trained-on-mnist-dataset) <===> [Training Notebook with some generated samples](https://github.com/VachanVY/Transfusion.torch/blob/main/mnist_test_transfusion.ipynb)
+<!-- * [Test Trained on Fashion MNIST Dataset](https://github.com/VachanVY/Transfusion.torch/tree/main?tab=readme-ov-file#test-trained-on-fashion-mnist-dataset) <===> [Training Notebook with some generated samples](https://github.com/VachanVY/Transfusion.torch/blob/main/fashion_mnist_test_transfusion.ipynb)
+* [Test Trained on MNIST dataset](https://github.com/VachanVY/Transfusion.torch/tree/main?tab=readme-ov-file#test-trained-on-mnist-dataset) <===> [Training Notebook with some generated samples](https://github.com/VachanVY/Transfusion.torch/blob/main/mnist_test_transfusion.ipynb) -->
 * [Important Snippets from the Paper](https://github.com/VachanVY/Transfusion.torch/tree/main?tab=readme-ov-file#introduction)
   
-## Test Trained on Fashion MNIST Dataset
+<!-- ## Test Trained on Fashion MNIST Dataset
 * Can produce 2 images of Fashion Items along with the text (in the form of tokens) shown above the respective images
   <!-- the integers above the images can be interpreted using this dictionary -->
-  ```python
+  <!-- ```python
   {'T-shirt/top': 0,
     'Trouser': 1,
     'Pullover': 2,
@@ -27,8 +27,8 @@
     'Sneaker': 7,
     'Bag': 8,
     'Ankle boot': 9}
-  ```
-  So `5` means it's a sandal and `0` means it's a T-shirt/top from the below image and just like that some more examples. Use the dictionary to interpret the tokens as text (for now, will change it)\
+  ``` -->
+  <!-- So `5` means it's a sandal and `0` means it's a T-shirt/top from the below image and just like that some more examples. Use the dictionary to interpret the tokens as text (for now, will change it)\
   ![download](https://github.com/user-attachments/assets/113abcdd-6de5-4c9e-81e6-d9a7b2671293)
   
   ---
@@ -42,7 +42,7 @@
   ![download](https://github.com/user-attachments/assets/bcd1c1dd-2225-4de1-ad13-e01da6c0fc5c)
   ---
   ![download](https://github.com/user-attachments/assets/df825844-7629-44b4-9b32-06c9d66a7198)
-* See [this notebook](https://github.com/VachanVY/Transfusion.torch/blob/main/mnist_test_transfusion.ipynb) for more examples
+* See [this notebook](https://github.com/VachanVY/Transfusion.torch/blob/main/mnist_test_transfusion.ipynb) for more examples -->
 
 ## Introduction
 * ![image](https://github.com/user-attachments/assets/342f8647-e4bc-48bc-99ce-d53332e725b8)

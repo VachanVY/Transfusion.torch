@@ -77,22 +77,21 @@ class PatchOps(nn.Module):
         self.linear = nn.Linear(out_dim, config.d_model)
 
     def patchify(self, images:Tensor):
-        patches = self.patch_proj(images) # (B, (P**2)*C, H//P, W//P)
+        patches = self.patch_proj(images[None]) # (B=1, (P**2)*C, H//P, W//P)
         patches = patches.flatten(2).transpose(1, 2)
-        return patches  # (B, N, dim) # N = (H*W)/P**2 | dim = P**2)*C
+        return patches[0]  # (N, dim) # N = (H*W)/P**2 | dim = P**2)*C
     
-    def unpatchify(self, x:Tensor): # (B, N = H*W//P**2, D = (P**2)*C)
-        # if self.unbatched: x = x.unsqueeze(0)
+    def unpatchify(self, x:Tensor): # (N = H*W//P**2, D = (P**2)*C)
         h, w = self.H//self.p, self.W//self.p # int(x.shape[1]**0.5) # h = H//P
-        x = x.reshape(-1, h, w, self.p, self.p, self.c) # (B, H//P, W//P, P, P, C)
-        x = torch.einsum('bhwpqc->bchpwq', x) # (B, C, H//P, P, W//P, P)
-        x = x.reshape(-1, self.c, h*self.p, w*self.p) # (B, C, H, W)
-        # if self.unbatched: x = x.squeeze(0)
+        x = x.reshape(h, w, self.p, self.p, self.c) # (H//P, W//P, P, P, C)
+        x = torch.einsum('hwpqc->chpwq', x) # (C, H//P, P, W//P, P)
+        x = x.reshape(self.c, h*self.p, w*self.p) # (C, H, W)
         return x
     
-    def forward(self, patches:Tensor, timesteps:Tensor): # (B, N, D) (B,)
+    def forward(self, patches:Tensor, timesteps:Tensor): # (N, D) (B=1,)
         # We add an embedding of the timestep t to every patch vector before the linear layer)
-        return self.linear(patches + self.time_emb(timesteps)[:, None, :]) # (B, N, d_model)
+        time_emb = self.time_emb(timesteps).unsqueeze(1)
+        return self.linear(patches[None] + time_emb)[0] # (B, N, d_model)
 
 
 class Transfussion(nn.Module):
@@ -133,13 +132,14 @@ class Transfussion(nn.Module):
         inputs:list[Tensor] = []; mask_params:list[tuple[int, int]] = []; modality_lengths:list[int] = []
 
         # Prepare the inputs for the model
-        for modality_str, modality_tok in zip(modality_str, modality_tokens):
+        for modality_str, modality_tok in zip(modality_strings, modality_tokens):
             if modality_str == 'text':
                 inputs.append(self.embeddings(modality_tok)) # (seq,) => (seq, d_model)
-                T = modality_tok.size(1)
+                T = modality_tok.size(0)
                 modality_lengths.append(T)
             elif modality_str == 'image':
-                N = modality_tok[0].size(1)
+                assert isinstance(modality_tok, (tuple, list)) and len(modality_tok) == 2
+                N = modality_tok[0].size(0)
                 mask_params.append((sum(modality_lengths), N))
                 inputs.append(self.patch_ops(*modality_tok)) # (patches, timesteps) => (N, d_model)
                 modality_lengths.append(N)
@@ -174,7 +174,7 @@ class Transfussion(nn.Module):
     
     def lm_mode(self, modality_tokens:list[tp.Any], modality_strings:list[str], diff_utils:DiffusionUtils, autocast:torch.autocast):
         _assert((mod in ["text", "image"] for mod in modality_strings), f"Unknown Modality in {modality_strings}")
-        text_length = sum([tok.size(1) for tok, _str in zip(modality_tokens, modality_strings) if _str == 'text'])
+        text_length = sum([tok.size(0) for tok, _str in zip(modality_tokens, modality_strings) if _str == 'text'])
         for _ in range(self.txt_maxlens - text_length):
             with autocast:
                 modality_token_emb, _ = self.forward_unbatched(modality_tokens, modality_strings) # list[Tensor]
@@ -184,7 +184,6 @@ class Transfussion(nn.Module):
             if (nxt_txt_tok.squeeze() == self.BOI):
                 modality_tokens, modality_strings = self.diff_mode(modality_tokens, modality_strings, diff_utils, autocast)
                 break
-        _assert((mod in ["text", "image"] for mod in modality_strings), f"Unknown Modality in {modality_strings}")
         return modality_tokens, modality_strings
     
     def diff_mode(self, modality_tokens:list[Tensor], modality_strings:list[str], diff_utils:DiffusionUtils, autocast:torch.autocast):
@@ -197,9 +196,9 @@ class Transfussion(nn.Module):
             model=self,
             modality_tokens=modality_tokens,
             modality_strings=modality_strings,
-            autocast=autocast,
+            autocast=autocast
         )
-        modality_tokens.append(self.EOI.reshape(1, 1)); modality_strings.append("text")
+        modality_tokens.append(self.EOI.reshape((1,))); modality_strings.append("text")
         modality_tokens, modality_strings = self.lm_mode(modality_tokens, modality_strings, diff_utils, autocast)
         return modality_tokens, modality_strings
     
@@ -234,7 +233,7 @@ class Transfussion(nn.Module):
         extra_config = dict(fused=True) if use_fused else dict()
         optimizer = torch.optim.AdamW(optim_groups, lr=learning_rate, betas=betas, **extra_config)
         return optimizer
-    
+
 
 class CosineDecayWithWarmup:
     def __init__(
@@ -260,3 +259,31 @@ class CosineDecayWithWarmup:
         decay_ratio = (step - self.warmup_steps) / (self.decay_steps - self.warmup_steps)
         coeff = 0.5 * (1.0 + math.cos(math.pi * decay_ratio))
         return self.min_learning_rate + coeff * (self.max_learning_rate - self.min_learning_rate)
+
+if __name__ == "__main__":
+    # [ (T1,), ( (N1, D), (,) ), (T2,), ( (N1, D), (,) )]
+    #                   OR
+    # [ (T3,), ( (N3, D), (,) ), (T4,),                 ]
+    from src.configs import MNIST_config as config
+    from src.llama2c import Transformer as LLaMA
+
+    model = Transfussion(
+        model=LLaMA(config),
+        config=config
+    )
+
+    text_and_images = [
+        [
+            torch.randint(0, 10, (39,)), 
+            (torch.randn(345, config.patch_size**2 * config.in_channels), torch.randint(0, config.num_timesteps, (1,))), 
+            torch.randint(0, 10, (14,))
+        ],
+        [
+            torch.randint(0, 10, (16,)), 
+            (torch.randn(359, config.patch_size**2 * config.in_channels), torch.randint(0, config.num_timesteps, (1,))), 
+            torch.randint(0, 10, (5,)), 
+            (torch.randn(2, config.patch_size**2 * config.in_channels), torch.randint(0, config.num_timesteps, (1,))), 
+            torch.randint(0, 10, (9,))
+        ]
+    ]
+    _ = model(text_and_images, [["text", "image", "text"], ["text", "image", "text", "image", "text"]])
