@@ -15,7 +15,7 @@
   
 ## Test Trained on Fashion MNIST Dataset
 * Can produce 2 images of Fashion Items along with the text (in the form of tokens) shown above the respective images
-  the integers above the images can be interpreted using this dictionary
+  <!-- the integers above the images can be interpreted using this dictionary -->
   ```python
   {'T-shirt/top': 0,
     'Trouser': 1,

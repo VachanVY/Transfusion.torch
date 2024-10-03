@@ -55,7 +55,7 @@ class DiffusionUtils:
     def generate(
         self, *,
         model:nn.Module,
-        modality_tokens:list[Tensor],   # [(B, Tbf), (B, N, D), (B, Taf)]
+        modality_tokens:list[Tensor],   # [(Tbf,), (N, D), (Taf,)] OR any other format
         modality_strings:list[str],     # ['text', 'image', 'text']
         use_ddim:bool=False,            # False for now until implemented
         autocast:torch.autocast
@@ -76,7 +76,7 @@ class DiffusionUtils:
             modality_tokens[-1] = (patch_ops.patchify(noised_image), timesteps) # (B, N, D)
             # model takes "noisy image" (in the form of modality_tokens[-1]) and returns the noise which should be removed from the "noisy image"
             with autocast:
-                modality_token_emb, _ = model(
+                modality_token_emb, _ = model.forward_unbatched(
                     modality_tokens=modality_tokens,
                     modality_strings=modality_strings
                 )
