@@ -8,6 +8,32 @@
   * I have taken the classes as text and trained it. See below for some generated examples... -->
 * **`TODO`: Train on a large Multi-Modal Dataset (something like tiny stories dataset with images in between illustrating the story...?)**
 
+```python
+from src.configs import MNIST_config as config
+from src.llama2c import Transformer as LLaMA
+
+model = Transfussion(
+    model=LLaMA(config),
+    config=config
+)
+
+text_and_images = [
+    [
+        torch.randint(0, 10, (39,)), # text
+        (torch.randn(345, config.patch_size**2 * config.in_channels), torch.randint(0, config.num_timesteps, (1,))), # image
+        torch.randint(0, 10, (14,)) # text
+    ],
+    [
+        torch.randint(0, 10, (16,)), # text
+        (torch.randn(359, config.patch_size**2 * config.in_channels), torch.randint(0, config.num_timesteps, (1,))), # image
+        torch.randint(0, 10, (5,)), # text
+        (torch.randn(2, config.patch_size**2 * config.in_channels), torch.randint(0, config.num_timesteps, (1,))),   # text
+        torch.randint(0, 10, (9,))  # text
+    ]
+]
+output = model(text_and_images, [["text", "image", "text"], ["text", "image", "text", "image", "text"]])
+```
+
 ## Contents
 <!-- * [Test Trained on Fashion MNIST Dataset](https://github.com/VachanVY/Transfusion.torch/tree/main?tab=readme-ov-file#test-trained-on-fashion-mnist-dataset) <===> [Training Notebook with some generated samples](https://github.com/VachanVY/Transfusion.torch/blob/main/fashion_mnist_test_transfusion.ipynb)
 * [Test Trained on MNIST dataset](https://github.com/VachanVY/Transfusion.torch/tree/main?tab=readme-ov-file#test-trained-on-mnist-dataset) <===> [Training Notebook with some generated samples](https://github.com/VachanVY/Transfusion.torch/blob/main/mnist_test_transfusion.ipynb) -->
