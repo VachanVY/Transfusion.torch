@@ -20,14 +20,14 @@ model = Transfussion(
 text_and_images = [
     [
         torch.randint(0, 10, (39,)), # text
-        (torch.randn(345, config.patch_size**2 * config.in_channels), torch.randint(0, config.num_timesteps, (1,))), # image
+        (torch.randn(345, config.patch_size**2 * config.in_channels), torch.randint(0, config.num_timesteps, (1,))), # (image, timestep)
         torch.randint(0, 10, (14,)) # text
     ],
     [
         torch.randint(0, 10, (16,)), # text
-        (torch.randn(359, config.patch_size**2 * config.in_channels), torch.randint(0, config.num_timesteps, (1,))), # image
+        (torch.randn(359, config.patch_size**2 * config.in_channels), torch.randint(0, config.num_timesteps, (1,))), # (image, timestep)
         torch.randint(0, 10, (5,)), # text
-        (torch.randn(2, config.patch_size**2 * config.in_channels), torch.randint(0, config.num_timesteps, (1,))),   # text
+        (torch.randn(2, config.patch_size**2 * config.in_channels), torch.randint(0, config.num_timesteps, (1,))),   # (image, timestep)
         torch.randint(0, 10, (9,))  # text
     ]
 ]
