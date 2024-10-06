@@ -9,8 +9,10 @@
 * **`TODO`: Train on a large Multi-Modal Dataset (something like tiny stories dataset with images in between illustrating the story...?)**
 
 ```python
-from src.configs import MNIST_config as config
 from src.llama2c import Transformer as LLaMA
+
+class config:
+    ... # Fill in some parameters for the model | see src/configs.py for reference
 
 model = Transfussion(
     model=LLaMA(config),
